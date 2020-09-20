@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- google fonts  -->
+    <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="root"></div>
+</body>
+<script>
+    const app = document.getElementById('root');
+    const logo = document.createElement('img');
+    logo.src = 'logo.png';
+
+    const container = document.createElement('div')
+    container.setAttribute('class', 'container')
+
+    function makeRequest() {
+        let request = new XMLHttpRequest();
+        request.open("GET", "https://ghibliapi.herokuapp.com/films");
+        request.onload = function () {
+            //  將JSON字串轉為物件
+            let data = JSON.parse(this.response);
+            //  錯誤處理
+            if (request.status >= 200 && request.status < 400) {
+                data.forEach(movie => {
+                    const card = document.createElement('div')
+                    card.setAttribute('class', 'card')
+                    const h1 = document.createElement('h1')
+                    h1.textContent = movie.title
+                    const p = document.createElement('p')
+                    //限制顯示字數
+                    movie.description=movie.description.substring(0,300)
+                    //內文太多 以"..."省略
+                    p.textContent=`${movie.description}...` 
+                    container.appendChild(card);
+                    card.appendChild(h1);
+                    card.appendChild(p);
+                })
+            }
+            else {
+                console.log('error');
+            }
+        };
+        request.send();
+    }
+    makeRequest();
+    app.appendChild(logo);
+    app.appendChild(container);
+</script>
+
+</html>
